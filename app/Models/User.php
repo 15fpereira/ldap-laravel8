@@ -9,14 +9,20 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use LdapRecord\Laravel\Auth\LdapAuthenticatable;
+use LdapRecord\Laravel\Auth\AuthenticatesWithLdap;
+use LdapRecord\Laravel\Auth\HasLdapUser;
 
-class User extends Authenticatable
+
+class User extends Authenticatable implements LdapAuthenticatable
 {
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto;
-    use Notifiable;
     use TwoFactorAuthenticatable;
+    use HasLdapUser;
+    use Notifiable, AuthenticatesWithLdap;
+
 
     /**
      * The attributes that are mass assignable.
@@ -25,7 +31,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'email',
+        'username',
         'password',
     ];
 
@@ -58,4 +64,14 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function getLdapDomainColumn()
+    {
+        return 'domain';
+    }
+
+    public function getLdapGuidColumn()
+    {
+        return 'guid';
+    }
 }

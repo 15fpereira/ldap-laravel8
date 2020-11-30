@@ -38,14 +38,15 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'ldap',
         ],
-
+/*
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
             'hash' => false,
         ],
+*/
     ],
 
     /*
@@ -66,10 +67,26 @@ return [
     */
 
     'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+
+        'ldap' => [
+            'driver' => 'ldap',
+            'model' => LdapRecord\Models\OpenLDAP\User::class,
+            'database' => [
+                'model' => App\Models\User::class,
+                'rules' => [],
+               // 'sync_passwords' => false,
+                'sync_passwords' => 'Password',
+                'sync_attributes' => [
+                    'name' => 'cn',
+                    'username' => 'uid',
+                 //   'password' => 'password'
+                ],
+            ],
         ],
+    //    'users' => [
+    //        'driver' => 'eloquent',
+    //        'model' => App\Models\User::class,
+    //    ],
 
         // 'users' => [
         //     'driver' => 'database',
@@ -92,14 +109,14 @@ return [
     |
     */
 
-    'passwords' => [
-        'users' => [
-            'provider' => 'users',
-            'table' => 'password_resets',
-            'expire' => 60,
-            'throttle' => 60,
-        ],
-    ],
+   // 'passwords' => [
+   //     'users' => [
+   //         'provider' => 'users',
+   //         'table' => 'password_resets',
+   //         'expire' => 60,
+   //         'throttle' => 60,
+   //     ],
+   // ],
 
     /*
     |--------------------------------------------------------------------------
@@ -112,6 +129,6 @@ return [
     |
     */
 
-    'password_timeout' => 10800,
+   // 'password_timeout' => 10800,
 
 ];
